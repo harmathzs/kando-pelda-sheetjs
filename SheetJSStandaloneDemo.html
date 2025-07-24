@@ -5,11 +5,11 @@
   /* fetch JSON data and parse */
   const url = "https://docs.sheetjs.com/executive.json";
   const raw_data = await (await fetch(url)).json();
-  console.log('raw_data', raw_data);
+  console.log('raw_data', raw_data); // Array(79)
 
   /* filter for the Presidents */
   const prez = raw_data.filter(row => row.terms.some(term => term.type === "prez"));
-  console.log('prez', prez);
+  console.log('prez', prez); // Array(45)
 
   /* sort by first presidential term */
   prez.forEach(row => row.start = row.terms.find(term => term.type === "prez").start);
@@ -28,6 +28,23 @@
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Dates");
   console.log('workbook', workbook);
+  /* {
+    "SheetNames": [
+        "Dates"
+    ],
+    "Sheets": {
+        "Dates": {
+            "A2": {
+                "t": "s",
+                "v": "George Washington"
+            },
+            "B2": {
+                "t": "s",
+                "v": "1732-02-22"
+            },
+            "A3": {
+            ... */
+
 
   /* fix headers */
   XLSX.utils.sheet_add_aoa(worksheet, [["Name", "Birthday"]], { origin: "A1" });
@@ -37,6 +54,18 @@
   const max_width = rows.reduce((w, r) => Math.max(w, r.name.length), 10);
   worksheet["!cols"] = [ { wch: max_width } ];
   console.log('worksheet', worksheet);
+  /*
+  {
+    "A2": {
+        "t": "s",
+        "v": "George Washington"
+    },
+    "B2": {
+        "t": "s",
+        "v": "1732-02-22"
+    },
+    "A3": {
+    ... */
 
   /* create an XLSX file and try to save to Presidents.xlsx */
   XLSX.writeFile(workbook, "Presidents.xlsx", { compression: true });
